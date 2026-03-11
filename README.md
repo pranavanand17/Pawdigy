@@ -1,12 +1,8 @@
-# Pawdigy
+# Pawdigy 🐈‍⬛
 
 Insert a photo here
 
 ##
-
-
-
-🐈‍⬛
 
 Pawdigy is a desktop pet thing that I made for fun :) 
 He's a gray cat.
@@ -22,3 +18,4 @@ The art is made by me manually 😊 (Art LIVES!)
 
 
 ![prodigy](https://github.com/user-attachments/assets/c071e35f-cb73-4c41-aff5-fb5f3b6d6e30)
+
