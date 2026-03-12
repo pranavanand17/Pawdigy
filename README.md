@@ -1,6 +1,6 @@
 # Pawdigy 🐈‍⬛
 
-Insert a photo here
+<img width="1025" height="293" alt="image" src="https://github.com/user-attachments/assets/f4b67813-c51b-4554-9ddf-b480801ecf16" />
 
 ##
 
@@ -21,6 +21,7 @@ The art is made by me 😊 (Art LIVES!)
 
 
 ![prodigy](https://github.com/user-attachments/assets/c071e35f-cb73-4c41-aff5-fb5f3b6d6e30)
+
 
 
 
