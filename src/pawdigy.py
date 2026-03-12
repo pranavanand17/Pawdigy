@@ -41,7 +41,8 @@ def keep_on_top():
     root.after(2000, keep_on_top)
 
 root.config(bg="white")
-root.wm_attributes("-transparentcolor", "white")
+if sys.platform != 'linux':
+    root.wm_attributes("-transparentcolor", "white")
 
 root.bind("<Escape>", lambda e: root.destroy())
 
@@ -84,7 +85,9 @@ fallen_frames = [fallen1, fallen2]
 
 # ---------- CAT WINDOW ----------
 
-label = tk.Label(root, bg="white", bd=0)
+# Black on linux, white everywhere else
+bg = "black" if sys.platform == 'linux' else "white"
+label = tk.Label(root, bg=bg, bd=0)
 label.pack()
 
 # ---------- SPEECH WINDOW ----------
@@ -93,7 +96,9 @@ bubble_win = tk.Toplevel()
 bubble_win.overrideredirect(True)
 bubble_win.attributes("-topmost", True)
 bubble_win.config(bg="white")
-bubble_win.wm_attributes("-transparentcolor", "white")
+
+if sys.platform != 'linux':
+    bubble_win.wm_attributes("-transparentcolor", "white")
 
 bubble = tk.Label(
     bubble_win,
