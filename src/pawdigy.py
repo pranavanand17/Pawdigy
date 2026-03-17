@@ -26,13 +26,80 @@ dejavu_awakened=False
 # ---------- DIALOGUE ----------
 revive_lines=["I'm back!","Alive again!","Screw that suit!"]
 
-normal_lines=[
-    "stop tryna do what everybody else doin yo",
-    "ah shit, here we go again",
-    "AI finna get you",
-    "Sub 2 Pewds",
-    "I hate Tuesdays."
+common_dialogue = [
+("Stop watching the news", 1),
+("If it ain't broke don't automate it", 1),
+("I hate Tuesdays.", 1),
+("No stress.", 1),
+("Let's get this show on the road", 1),
+("Going through the motions", 2),
+("This wait time is killing me", 2),
+("Pick your poison, so be it", 2),
+("Perspective is everything", 2),
+("Can't be asked", 2),
+("Right place right time type shit", 2),
+("Moving crates everyday", 2),
+("Everything is about me", 2),
+("Welcome to existence", 2),
+("Screaming into the void", 2),
 ]
+
+normal_dialogue = [
+("Murakami is a gigachad", 3),
+("Miura is a gigachad", 3),
+("Sub 2 Pewds", 3),
+("Wikipedia is unreliable but so are you", 3),
+("We all spewing random shit in all directions hoping something sticks", 3),
+("Fake it till u make it, everyones in on it", 3),
+("If you want something ask for it... Don't beat around the bush", 3),
+("Hyperfixation allows for new perspectives", 3),
+("Anything can be cancerous if blown out of proportion", 3),
+
+("No one cares about you all that much", 4),
+("I'll be honest, I don't care", 4),
+("High risk, high reward", 4),
+("Quit while ur ahead", 4),
+("Don't be mean to the machines, they're human now", 4),
+("You are expendable, prolly...", 4),
+("Survival requires you to be self-obsessed", 4),
+("You know something isn't a tool if it has to be labelled as one", 4),
+("If you reach out to ppl, they'll reach back...hopefully", 4),
+]
+
+rare_dialogue = [
+("Why do you open WhatsApp just to be disappointed ain't no one's messaged", 5),
+("I think I might have Stockholm syndrome with music, but i don't mind", 5),
+("No one asked to be here, but here we are", 5),
+("There is order in chaos", 5),
+("Maybe the wait will make it worth it", 5),
+("Always searching for that spark", 5),
+("The worlds huge, we get lost in our bubbles", 5),
+("Life sucks but every once in a while....u get an SSR level day", 5),
+
+("Is something real only if its natural? What is real in the first place?", 6),
+("Truth is the greatest illusion of them all", 6),
+("Goddamnit, this life's been going on for way too long", 6),
+("Just taking up space", 6),
+("There’s nothing that’s gonna make this any more worthwhile", 6),
+("You have to die to be reborn", 6),
+("Wake up sheeple", 6),
+("I wanna go home & stay home goddamnit", 6),
+]
+
+ultra_rare_dialogue = [
+("This is the price you have to pay to be in this universe in this form", 7),
+("I used to be a guy experiencing the world but now i feel like the universe experiencing a guy", 7),
+("I'm a highly functional monkey surrounded by smarter algorithms", 7),
+("Life fully and completely sucks", 8),
+("Money doesn't exist, we just made it up", 7),
+]
+
+all_dialogue = (
+    common_dialogue +
+    normal_dialogue +
+    rare_dialogue +
+    ultra_rare_dialogue
+)
 
 dejavu_lines=[
     "Human beings are a disease, cancer of this planet",
@@ -41,6 +108,14 @@ dejavu_lines=[
     "Free your mind",
     "Ever had that feeling where you’re not sure if you’re awake or dreaming?"
 ]
+
+def get_dialogue(dialogue_list):
+    weighted = []
+    for line, rarity in dialogue_list:
+        weight = max(1, 10 - rarity)
+        weighted.extend([line] * weight)
+    return random.choice(weighted)
+
 
 # ---------- WINDOW ----------
 root=tk.Tk()
@@ -233,15 +308,26 @@ def stop_drag(e):
         state="fall"
         fall_velocity=5
 
-label.bind("<Button-1>",start_drag)
+label.bind("<Button-1>", start_drag)
+
+def on_right_click(e):
+    if current_form == "normal":
+        speak(get_dialogue(all_dialogue))
+    elif current_form == "dejavu":
+        speak(random.choice(dejavu_lines))
+    
+label.bind("<Button-3>", on_right_click)
 label.bind("<B1-Motion>",dragging)
 label.bind("<ButtonRelease-1>",stop_drag)
 
 # ---------- UPDATE ----------
 def update():
     global frame,anim_counter,x,y,state,idle_timer,idle_frame,fall_velocity,fall_frame,stunned_timer,robo_break_frame,current_form,idle_frames,direction
-
-    lines = dejavu_lines if (current_form=="dejavu" and dejavu_awakened) else normal_lines
+    
+    if current_form == "dejavu" and dejavu_awakened:
+        lines = dejavu_lines
+    else:
+        lines = None  # we won't use this for normal anymore
 
     if state=="walk":
 
@@ -271,7 +357,13 @@ def update():
             state="idle"
             idle_timer=random.randint(30,80)
             idle_frame=0
-            speak(random.choice(lines))
+            if current_form == "normal":
+                speak(get_dialogue(all_dialogue))
+            else:
+                if current_form == "normal":
+                    speak(get_dialogue(all_dialogue))
+                elif current_form == "dejavu" and dejavu_awakened:
+                    speak(random.choice(dejavu_lines))
 
     elif state=="idle":
         label.config(image=idle_frames[idle_frame%len(idle_frames)])
