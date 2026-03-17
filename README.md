@@ -10,9 +10,9 @@ He's a gray cat.
 
 He'll walk around ur screen and stare at u for now (Release v1.0.0)
 
-You can download the .exe from the releases corner
+You can download the .exe from the releases section
 
-### Honest corner
+### Honesty is the best policy
 This project is vibe coded (RIP coding)
 
 The art is made by me 😊 (Art LIVES!)
@@ -21,6 +21,14 @@ The art is made by me 😊 (Art LIVES!)
 
 
 ![prodigy](https://github.com/user-attachments/assets/c071e35f-cb73-4c41-aff5-fb5f3b6d6e30)
+
+# License
+The code and creative/artistic content here (all content inside "assets/") folder, specifically the cat's images are licensed under CC-BY-NC-ND license. Please see LICENSE for details.
+
+
+
+
+
 
 
 

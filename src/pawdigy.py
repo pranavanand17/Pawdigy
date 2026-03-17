@@ -2,6 +2,8 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import os, random, sys
 
+print("🐾 Pawdigy running — press ESC to exit")
+
 def resource_path(p):
     try: return os.path.join(sys._MEIPASS, p)
     except: return os.path.join(os.path.abspath("."), p)
@@ -83,22 +85,32 @@ dragR=[flip("pawdigypickedup.png"),flip("pawdigypickedup1.png")]
 r_walkL=[load("robopawdigywalking.png"),load("robopawdigywalking2.png")]
 r_walkR=[flip("robopawdigywalking.png"),flip("robopawdigywalking2.png")]
 r_idle=[load("robopawdigy.png"),load("robopawdigy2.png")]
-r_drag=[load("robopawdigypickedup.png"),load("robopawdigypickedup1.png")]
+r_dragL=[load("robopawdigypickedup.png"),load("robopawdigypickedup1.png")]
+r_dragR=[flip("robopawdigypickedup.png"),flip("robopawdigypickedup1.png")]
 r_fallL=[load("robopawdigyfalling1.png"),load("robopawdigyfalling2.png")]
 r_fallR=[flip("robopawdigyfalling1.png"),flip("robopawdigyfalling2.png")]
-r_break=[
-load("robopawdigyfallen1.png"),
-load("robopawdigyfallen2.png"),
-load("robopawdigyfallen3.png"),
-load("robopawdigyfallen4.png"),
-load("robopawdigyfallen5.png"),
+r_breakL=[
+    load("robopawdigyfallen1.png"),
+    load("robopawdigyfallen2.png"),
+    load("robopawdigyfallen3.png"),
+    load("robopawdigyfallen4.png"),
+    load("robopawdigyfallen5.png"),
+]
+
+r_breakR=[
+    flip("robopawdigyfallen1.png"),
+    flip("robopawdigyfallen2.png"),
+    flip("robopawdigyfallen3.png"),
+    flip("robopawdigyfallen4.png"),
+    flip("robopawdigyfallen5.png"),
 ]
 
 # DEJAVU
 dejavu_idle=[load("dejavupawdigy.png"),load("dejavupawdigy2.png")]
 dejavu_walkL=[load("dejavupawdigywalking.png"),load("dejavupawdigywalking2.png")]
 dejavu_walkR=[flip("dejavupawdigywalking.png"),flip("dejavupawdigywalking2.png")]
-dejavu_drag=[load("dejavupawdigypickedup.png"),load("dejavupawdigypickedup1.png")]
+dejavu_dragL=[load("dejavupawdigypickedup.png"),load("dejavupawdigypickedup1.png")]
+dejavu_dragR=[flip("dejavupawdigypickedup.png"),flip("dejavupawdigypickedup1.png")]
 
 idle_frames=idleN
 
@@ -137,6 +149,14 @@ def speak(text):
     bubble_win.geometry(f"+{x+20}+{y-35}")
     root.after(4000,bubble_win.withdraw)
 
+# ---------- KEEP ON TOP LOOP ----------
+def keep_on_top():
+    root.attributes("-topmost", True)
+    bubble_win.attributes("-topmost", True)
+    root.after(2000, keep_on_top)
+
+keep_on_top()
+
 # ---------- INPUT ----------
 def on_key(e):
     global typed_buffer,current_form,idle_frames,state,fall_velocity,idle_frame,idle_timer,dejavu_awakened
@@ -157,7 +177,11 @@ def on_key(e):
     if typed_buffer.endswith("replaced"):
         current_form="robo"
         idle_frames=r_idle
-        state="idle"
+        if y < ground:
+            state = "fall"
+            fall_velocity = 5
+        else:
+            state = "idle" 
         idle_frame=0
         idle_timer=50
         dejavu_awakened=False
@@ -219,7 +243,6 @@ def update():
 
     lines = dejavu_lines if (current_form=="dejavu" and dejavu_awakened) else normal_lines
 
-    # WALK
     if state=="walk":
 
         if current_form=="robo":
@@ -250,7 +273,6 @@ def update():
             idle_frame=0
             speak(random.choice(lines))
 
-    # IDLE
     elif state=="idle":
         label.config(image=idle_frames[idle_frame%len(idle_frames)])
         idle_frame+=1
@@ -260,22 +282,20 @@ def update():
             state="walk"
             frame=0
 
-    # DRAG
     elif state=="drag":
         if current_form=="robo":
-            frames=r_drag
+            frames = r_dragR if direction==1 else r_dragL
         elif current_form=="dejavu":
-            frames=dejavu_drag
+            frames = dejavu_dragR if direction==1 else dejavu_dragL
         else:
             frames=dragR if direction==1 else dragL
 
         label.config(image=frames[frame%len(frames)])
         frame+=1
 
-    # FALL
     elif state=="fall":
 
-        if current_form=="dejavu":
+        if current_form=="dejavu" and dejavu_awakened:
             state="idle"
             return
 
@@ -298,7 +318,6 @@ def update():
                 state="stunned"
                 stunned_timer=40
 
-    # ROBO BREAK
     elif state=="robo_break":
 
         if robo_break_frame <= 2:
@@ -313,9 +332,11 @@ def update():
         else:
             anim_counter = 0
             robo_break_frame += 1
+        
+        frames = r_breakR if direction==1 else r_breakL
 
-        if robo_break_frame < len(r_break):
-            label.config(image=r_break[robo_break_frame])
+        if robo_break_frame < len(frames):
+            label.config(image=frames[robo_break_frame])
         else:
             speak(random.choice(revive_lines))
             current_form="normal"
@@ -324,7 +345,6 @@ def update():
             idle_timer=50
             idle_frame=0
 
-    # STUNNED
     elif state=="stunned":
         frames=stunR if direction==1 else stunL
         label.config(image=frames[frame%2])
